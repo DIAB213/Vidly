@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Web;
 using System.Web.Mvc;
 using Vidly.Models;
+using Vidly.ViewModels;
 
 namespace Vidly.Controllers
 {
@@ -43,5 +45,52 @@ namespace Vidly.Controllers
 
             return View(movie);
         }
+
+        public ActionResult New()
+        {
+            var genres = _context.Genres.ToList();
+            var viewModel = new MovieFormViewModel()
+            {
+                Genres = genres
+            };
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public ActionResult Save(Movie movie)
+        {
+            if (movie.Id == 0)
+                _context.Movies.Add(movie);
+            else
+            {
+                var movieInDb = _context.Movies.Single(m => m.Id == movie.Id);
+
+                movieInDb.Name = movie.Name;
+                movieInDb.ReleaseDate = movie.ReleaseDate;
+                movieInDb.GenreId = movie.GenreId;
+                movieInDb.DateAdded = DateTime.Now;
+                movieInDb.NumberInStock = movie.NumberInStock;
+            }
+
+            _context.SaveChanges();
+
+            return RedirectToAction("Index", "Movies");
+        }
+
+        public ActionResult Edit(int id)
+        {
+            var movie = _context.Movies.SingleOrDefault(c => c.Id == id);
+            if (movie == null)
+                return HttpNotFound();
+
+            var viewModel = new MovieFormViewModel()
+            {
+                Movie = movie,
+                Genres = _context.Genres
+            };
+            return View("MovieForm", viewModel);
+
+        }
+
     }
 }
