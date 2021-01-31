@@ -1,4 +1,4 @@
-﻿@model mov
+﻿@model Vidly.Models.Movie
 @{
     ViewBag.Title = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -12,7 +12,7 @@
     <li>Release Date: @Model.ReleaseDate.ToLongDateString()</li>
     @if (@Model. != null)
     {
-        <li>Date Added: @Model.DateAdded.ToLongDateString()</li>
+        <li>Date Added: @Model.DateAdded</li>
     }
     <li>Number in Stock: @Model.NumberInStock</li>
 </ul>
